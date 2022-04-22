@@ -9,9 +9,9 @@ exports.regUser = (req, res) => {
     // 获取客户端提交的注册信息
     const userinfo = req.body
     // 校验用户名和密码
-    if (!userinfo.username || !userinfo.password) {
-        return res.cc('用户名或密码错误')
-    }
+    // if (!userinfo.username || !userinfo.password) {
+    //     return res.cc('用户名或密码错误')
+    // }
 
     // 定义sql语句，查询用户是否存在
     const sqlStr = 'select * from ev_users where username=?'
