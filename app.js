@@ -1,6 +1,6 @@
 // 导入express
 const express = require('express')
-const joi = require('@hapi/joi')
+const joi = require('joi')
 
 // 创建服务器实例对象
 const app = express()
@@ -23,6 +23,12 @@ app.use((req, res, next) => {
     next()
 })
 
+//在路由之前，配置解析 Token 的中间件
+const expressJWT = require('express-jwt')
+const config = require('./config')
+
+app.use(expressJWT({secret: config.jwtSecretKey}).unless({path: [/^\/api/]}))
+
 //导入路由模块
 const userRouter = require('./router/user')
 app.use('/api', userRouter)
@@ -31,6 +37,10 @@ app.use('/api', userRouter)
 app.use((err, req, res, next) =>{
     // 验证失败导致的错误
     if (err instanceof joi.ValidationError) res.cc(err)
+    // 身份认证失败后的错误
+    if (err.name === 'UnauthorizedError') {
+        return res.cc('身份认证失败！')
+    }
     // 未知错误
     res.cc(err)
 })
